@@ -2,7 +2,7 @@
   "publickey_Path": "keys/public_key.pub",
   "mysql_host":"mysqlcommuser.databasestest.svc.cluster.local:3306",
   "mysql_password":"123456",
-  "mysql_user":"qiyuxin",
+  "mysql_user":"qiyunxin",
   "mysql_db":"sampledb",
   "token_expire":300,
   "redis_address":"redis.databasestest.svc.cluster.local:6379"
