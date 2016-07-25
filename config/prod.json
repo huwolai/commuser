@@ -2,7 +2,7 @@
   "publickey_Path": "keys/public_key.pub",
   "mysql_host":"172.30.237.62:3306",
   "mysql_password":"123456",
-  "mysql_user":"qiyuxin",
+  "mysql_user":"qiyunxin",
   "mysql_db":"sampledb",
   "token_expire":300,
   "redis_address":"172.30.107.11:6379",
