@@ -7,7 +7,7 @@ import (
 
 func main() {
 
-	if startup.IsInstall() {
+	if !startup.IsInstall() {
 		startup.InitDBData()
 	}
 
