@@ -1,3 +1,4 @@
+-- +migrate Up
 -- 应用表
 CREATE TABLE IF NOT EXISTS app(
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
