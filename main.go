@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 	"log"
+	"api"
 )
 
 type LogHandler struct  {
@@ -55,8 +56,8 @@ func GetRouters()  *mux.Router{
 		Route{  //应用申请
 			"SubmitApp",
 			"POST",
-			"/pay/app",
-			action.SubmitApp,
+			"/login",
+			api.Login,
 		},
 
 
