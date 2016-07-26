@@ -54,7 +54,7 @@ func GetRouters()  *mux.Router{
 	return  NewRouterWithHandle([]Route{
 
 		Route{  //应用申请
-			"SubmitApp",
+			"Login",
 			"POST",
 			"/login",
 			api.Login,
@@ -73,4 +73,6 @@ func main() {
 	}
 
 	config.Init()
+
+	log.Fatal(http.ListenAndServe(":8080", GetRouters()))
 }
