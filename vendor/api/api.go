@@ -23,10 +23,12 @@ func Login(w http.ResponseWriter, r *http.Request)  {
 	bytes  := md5.Sum([]byte(signStr))
 	basesign :=fmt.Sprintf("%X",bytes)
 
-	params :=map[string]interface{}{
+	params :=map[string]string{
 		"r_id":"1",
 	}
 	sign := util.SignWithBaseSign(params,apikey,basesign,nil)
+
+	sign =fmt.Sprintf("%s.%s",basesign,sign)
 
 	paramsBytes,err := json.Marshal(params)
 	util.CheckErr(err)
