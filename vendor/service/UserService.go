@@ -31,10 +31,18 @@ type LoginResult struct  {
 }
 
 //登录
-func Login(username string,password string) (*LoginResult,error)  {
+func Login(username string,password string,appId string) (*LoginResult,error)  {
+
+	if username=="" {
+		return nil,errors.New("用户名不能为空!")
+	}
+
+	if appId=="" {
+		return nil,errors.New("appId不能为空!")
+	}
 
    	user :=  dao.NewUser()
-	user,err := user.QueryUserByUsername(username)
+	user,err := user.QueryUserByUsername(username,appId)
 	if err!=nil {
 
 		return nil,errors.New("查询用户信息失败!")

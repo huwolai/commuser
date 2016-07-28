@@ -24,18 +24,14 @@ type AppDto struct  {
 func Login(w http.ResponseWriter, r *http.Request)  {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
-	_,data,err := CheckRequest(r)
-	if err!=nil{
-		util.ResponseError(w,http.StatusUnauthorized,"认证失败!")
-		return;
-	}
+	data,err := ioutil.ReadAll(r.Body)
 	var paramMap map[string]string
 	util.CheckErr(util.ReadJsonByByte(data,&paramMap))
-
+	appId := r.Header.Get("app_id");
 	username :=paramMap["username"]
 	password := paramMap["password"]
 
-	loginResult,err := service.Login(username,password)
+	loginResult,err := service.Login(username,password,appId)
 	if err!=nil {
 		util.ResponseError400(w,err.Error())
 		return

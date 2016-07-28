@@ -28,10 +28,10 @@ func NewUser() *User  {
 }
 
 //查询用户信息通过用户名
-func (self *User) QueryUserByUsername(username string) (*User,error)  {
+func (self *User) QueryUserByUsername(username string,appId string) (*User,error)  {
 
 	var user *User
-	_,err :=db.NewSession().Select("*").From("user").Where("email=? or mobile=?",username,username).LoadStructs(&user)
+	_,err :=db.NewSession().Select("*").From("user").Where("(email=? or mobile=?) and app_id=?",username,username,appId).LoadStructs(&user)
 
 	return user,err;
 }
