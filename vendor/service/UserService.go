@@ -31,7 +31,7 @@ type LoginResult struct  {
 }
 
 //登录
-func Login(username string,password string) (LoginResult,error)  {
+func Login(username string,password string) (*LoginResult,error)  {
 
    	user :=  dao.NewUser()
 	user,err := user.QueryUserByUsername(username)
@@ -48,11 +48,11 @@ func Login(username string,password string) (LoginResult,error)  {
 		return nil,errors.New("密码不正确!")
 	}
 
-	userdata,err := GetUserInfoFromUCR(strconv.Itoa(user.Id))
+	userdata,err := GetUserInfoFromUCR(strconv.FormatInt(user.Id,20))
 	if err!=nil{
 		return nil,errors.New("获取UCR数据失败!")
 	}
-	var loginResult LoginResult
+	var loginResult *LoginResult
 	err =util.ReadJsonByByte(userdata,&loginResult)
 	if err!=nil{
 		return nil,errors.New("解析数据错误!")

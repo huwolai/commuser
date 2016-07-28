@@ -45,10 +45,7 @@ func Login(w http.ResponseWriter, r *http.Request)  {
 		util.ResponseError400(w,err.Error())
 		return
 	}
-
 	util.WriteJson(w,loginResult)
-
-
 }
 
 //检查请求合法性
