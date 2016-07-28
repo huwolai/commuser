@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"errors"
 	"service"
+	"github.com/gin-gonic/gin"
 )
 
 
@@ -20,23 +21,46 @@ type AppDto struct  {
 	Status int `json:"status"`
 }
 
+type LoginParam struct {
+	Username     string `form:"username" json:"username" binding:"required"`
+	Password string `form:"password" json:"password" binding:"required"`
+}
+
 //登录
-func Login(w http.ResponseWriter, r *http.Request)  {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+func Login(c *gin.Context)  {
 
-	data,err := ioutil.ReadAll(r.Body)
-	var paramMap map[string]string
-	util.CheckErr(util.ReadJsonByByte(data,&paramMap))
-	appId := r.Header.Get("app_id");
-	username :=paramMap["username"]
-	password := paramMap["password"]
 
-	loginResult,err := service.Login(username,password,appId)
-	if err!=nil {
-		util.ResponseError400(w,err.Error())
+	var loginParam LoginParam
+	err := c.BindJSON(&loginParam)
+	if err!=nil{
+		c.JSON(http.StatusBadRequest,"数据解析错误!")
 		return
 	}
-	util.WriteJson(w,loginResult)
+
+	appId := getAppId(c)
+
+	if appId=="" {
+		c.JSON(http.StatusBadRequest,"app_id不能为空!")
+		return
+	}
+
+	loginResult,err := service.Login(loginParam.Username,loginParam.Password,appId)
+	if err!=nil {
+		c.JSON(http.StatusBadRequest,err.Error())
+		return
+	}
+	c.JSON(http.StatusOK,loginResult)
+}
+
+func getAppId(c *gin.Context) string {
+
+	appId := c.Request.Header.Get("app_id")
+	if appId=="" {
+
+		appId = c.Query("app_id")
+	}
+
+	return appId
 }
 
 //检查请求合法性
