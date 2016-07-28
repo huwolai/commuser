@@ -24,7 +24,7 @@ func (self AllowOrigin)  Handler(inner http.Handler, name string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("跨域设置..")
 		w.Header().Set("Access-Control-Allow-Origin","*");
-		w.Header().Set("Access-Control-Allow-Headers","content-type");
+		w.Header().Set("Access-Control-Allow-Headers","*");
 		w.Header().Set("Access-Control-Allow-Method","*")
 
 		inner.ServeHTTP(w, r)
