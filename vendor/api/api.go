@@ -9,6 +9,7 @@ import (
 	"errors"
 	"service"
 	"github.com/gin-gonic/gin"
+	"gitlab.qiyunxin.com/tangtao/utils/log"
 )
 
 
@@ -29,27 +30,27 @@ type LoginParam struct {
 //登录
 func Login(c *gin.Context)  {
 
-
 	var loginParam LoginParam
 	err := c.BindJSON(&loginParam)
 	if err!=nil{
-		c.JSON(http.StatusBadRequest,"数据解析错误!")
+		util.ResponseError400(c.Writer,"数据解析错误!")
 		return
 	}
 
 	appId := getAppId(c)
 
 	if appId=="" {
-		c.JSON(http.StatusBadRequest,"app_id不能为空!")
+		util.ResponseError400(c.Writer,"app_id不能为空!")
 		return
 	}
 
 	loginResult,err := service.Login(loginParam.Username,loginParam.Password,appId)
 	if err!=nil {
-		c.JSON(http.StatusBadRequest,err.Error())
+		log.Error(err)
+		util.ResponseError400(c.Writer,err.Error())
 		return
 	}
-	c.JSON(http.StatusOK,loginResult)
+	util.WriteJson(c.Writer,loginResult)
 }
 
 func getAppId(c *gin.Context) string {
