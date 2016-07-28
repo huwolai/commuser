@@ -3,14 +3,9 @@ package api
 import (
 	"net/http"
 	"fmt"
-	"crypto/md5"
-	"time"
 	"gitlab.qiyunxin.com/tangtao/utils/util"
-	"strings"
-	"strconv"
 	"dao"
 	"io/ioutil"
-	"log"
 	"errors"
 	"service"
 )
@@ -52,30 +47,30 @@ func Login(w http.ResponseWriter, r *http.Request)  {
 func CheckRequest( r *http.Request) (string,[]byte,error)  {
 
 	bodyBytes,err := ioutil.ReadAll(r.Body)
-	appId,appKey,basesign,err:=AppIsOk(r);
+	appId,_,err:=AppIsOk(r);
 	if err!=nil{
 		return appId,bodyBytes,err;
 	}
-	sign := r.Header.Get("sign")
-	signs :=strings.Split(sign,".")
-	if len(signs)!=2 {
-		return appId,bodyBytes,errors.New("非法请求!")
-	}
-
-	if err!=nil{
-		return appId,bodyBytes,errors.New("参数有误!")
-	}
-
-	var paramMap map[string]interface{}
-	util.CheckErr(util.ReadJsonByByte(bodyBytes,&paramMap))
-
-	wantSign := util.SignWithBaseSign(paramMap,appKey,basesign,nil)
-	gotSign :=signs[1];
-	if wantSign!=gotSign {
-		log.Println("wantSign: ",wantSign,"gotSign: ",gotSign)
-
-		return appId,bodyBytes,errors.New("签名不匹配!")
-	}
+	//sign := r.Header.Get("sign")
+	//signs :=strings.Split(sign,".")
+	//if len(signs)!=2 {
+	//	return appId,bodyBytes,errors.New("非法请求!")
+	//}
+	//
+	//if err!=nil{
+	//	return appId,bodyBytes,errors.New("参数有误!")
+	//}
+	//
+	//var paramMap map[string]interface{}
+	//util.CheckErr(util.ReadJsonByByte(bodyBytes,&paramMap))
+	//
+	//wantSign := util.SignWithBaseSign(paramMap,appKey,basesign,nil)
+	//gotSign :=signs[1];
+	//if wantSign!=gotSign {
+	//	log.Println("wantSign: ",wantSign,"gotSign: ",gotSign)
+	//
+	//	return appId,bodyBytes,errors.New("签名不匹配!")
+	//}
 	return appId,bodyBytes,nil
 }
 
@@ -108,55 +103,64 @@ func SubmitApp(w http.ResponseWriter, r *http.Request)  {
 }
 
 
-func AppIsOk(r *http.Request) (appId string,appKey string,basesign string,er error) {
+func AppIsOk(r *http.Request) (appId string,appKey string,er error) {
 	app_id := r.Header.Get("app_id");
+	app_key := r.Header.Get("app_key");
 	if app_id=="" {
 
-		return "","","",errors.New("app_id不能为空!");
+		return "","",errors.New("app_id不能为空!");
+	}
+
+	if app_key=="" {
+		return "","",errors.New("app_key不能为空!");
 	}
 
 	app := dao.NewAPP()
 	app = app.QueryCanUseApp(app_id)
 
 	if app==nil {
-		return app_id,"","",errors.New("系统中没有此应用信息!");
-	}
-	sign :=r.Header.Get("sign")
-	if sign =="" {
-		return app_id,app.AppKey,"",errors.New("签名信息(sign)不能为空!");
-	}
-	signs := strings.Split(sign,".")
-	gotSign := signs[0]
-
-	noncestr :=r.Header.Get("noncestr")
-	timestamp :=r.Header.Get("timestamp")
-
-	if noncestr=="" {
-		return app_id,app.AppKey,"",errors.New("随机码不能为空!");
+		return app_id,"",errors.New("系统中没有此应用信息!");
 	}
 
-	if timestamp=="" {
-		return app_id,app.AppKey,"",errors.New("时间戳不能为空!");
+	if app.AppKey!=app_key{
+		return app_id,"",errors.New("app_key不正确!");
 	}
+	//sign :=r.Header.Get("sign")
+	//if sign =="" {
+	//	return app_id,app.AppKey,"",errors.New("签名信息(sign)不能为空!");
+	//}
+	//signs := strings.Split(sign,".")
+	//gotSign := signs[0]
+	//
+	//noncestr :=r.Header.Get("noncestr")
+	//timestamp :=r.Header.Get("timestamp")
+	//
+	//if noncestr=="" {
+	//	return app_id,app.AppKey,"",errors.New("随机码不能为空!");
+	//}
+	//
+	//if timestamp=="" {
+	//	return app_id,app.AppKey,"",errors.New("时间戳不能为空!");
+	//}
 
 
-	timestam64,_ := strconv.ParseInt(timestamp,10,64)
-	timeBtw := time.Now().Unix()-int64(timestam64)
-	if timeBtw > 5*60 {
-		return app_id,app.AppKey,"",errors.New("签名已失效!");
-	}
+	//timestam64,_ := strconv.ParseInt(timestamp,10,64)
+	//timeBtw := time.Now().Unix()-int64(timestam64)
+	//if timeBtw > 5*60 {
+	//	return app_id,app.AppKey,"",errors.New("签名已失效!");
+	//}
+	//
+	//signStr:= fmt.Sprintf("%s%s%s",app.AppKey,noncestr,timestamp)
+	//wantSign :=fmt.Sprintf("%X",md5.Sum([]byte(signStr)))
+	//
+	//if gotSign!=wantSign {
+	//	fmt.Println("wantSign: ",wantSign,"gotSign: ",gotSign)
+	//	return app_id,app.AppKey,"",errors.New("请求不合法!");
+	//}
+	//
+	//if app==nil{
+	//	return app_id,app.AppKey,"",errors.New("应用信息未找到!请检查APPID是否正确!");
+	//}
 
-	signStr:= fmt.Sprintf("%s%s%s",app.AppKey,noncestr,timestamp)
-	wantSign :=fmt.Sprintf("%X",md5.Sum([]byte(signStr)))
-
-	if gotSign!=wantSign {
-		fmt.Println("wantSign: ",wantSign,"gotSign: ",gotSign)
-		return app_id,app.AppKey,"",errors.New("请求不合法!");
-	}
-
-	if app==nil{
-		return app_id,app.AppKey,"",errors.New("应用信息未找到!请检查APPID是否正确!");
-	}
-
-	return app_id,app.AppKey,gotSign,nil;
+	return app_id,app.AppKey,nil;
 }
