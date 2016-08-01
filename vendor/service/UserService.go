@@ -26,7 +26,7 @@ const (
 
 type LoginResult struct  {
 	OpenId string `json:"open_id"`
-	Rid string `json:"r_id"`
+	Id int64 `json:"id"`
 	Token string `json:"token"`
 
 }
