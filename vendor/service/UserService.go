@@ -17,7 +17,7 @@ import (
 const (
 
 	//用户中心URL
-	UCR_URL = "http://usercenterapi.test.svc.cluster.local:8080/"
+	UCR_URL = "http://usercenterapi.test.svc.cluster.local:8080"
 	//用户中心APPID
 	UCR_APP_ID ="commuser"
 	//用户中心APPKEY
