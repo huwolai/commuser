@@ -31,7 +31,7 @@ func NewUser() *User  {
 func (self *User) QueryUserByUsername(username string,appId string) (*User,error)  {
 
 	var user *User
-	_,err :=db.NewSession().Select("*").From("user").Where("(email=? or mobile=?) and app_id=?",username,username,appId).LoadStructs(&user)
+	_,err :=db.NewSession().Select("*").From("user").Where("(email=? or mobile=? or username=?) and app_id=?",username,username,username,appId).LoadStructs(&user)
 
 	return user,err;
 }

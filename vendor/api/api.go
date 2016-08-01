@@ -9,6 +9,7 @@ import (
 	"errors"
 	"service"
 	"github.com/gin-gonic/gin"
+	"gitlab.qiyunxin.com/tangtao/utils/log"
 )
 
 
@@ -32,6 +33,7 @@ func Login(c *gin.Context)  {
 	var loginParam LoginParam
 	err := c.BindJSON(&loginParam)
 	if err!=nil{
+		log.Error(err)
 		util.ResponseError400(c.Writer,"数据解析错误!")
 		return
 	}
