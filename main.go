@@ -19,8 +19,7 @@ func main() {
 
 	config.Init()
 
-	 env := os.Getenv("GO_ENV")
-
+	env := os.Getenv("GO_ENV")
 	if env=="tests" {
 		gin.SetMode(gin.TestMode)
 	}else if env== "prod" {

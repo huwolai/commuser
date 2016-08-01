@@ -11,6 +11,7 @@ import (
 
 	"time"
 	"strconv"
+	"gitlab.qiyunxin.com/tangtao/utils/log"
 )
 
 const (
@@ -44,7 +45,7 @@ func Login(username string,password string,appId string) (*LoginResult,error)  {
    	user :=  dao.NewUser()
 	user,err := user.QueryUserByUsername(username,appId)
 	if err!=nil {
-
+		log.Error(err)
 		return nil,errors.New("查询用户信息失败!")
 	}
 

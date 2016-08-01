@@ -9,7 +9,6 @@ import (
 	"errors"
 	"service"
 	"github.com/gin-gonic/gin"
-	"gitlab.qiyunxin.com/tangtao/utils/log"
 )
 
 
@@ -46,7 +45,6 @@ func Login(c *gin.Context)  {
 
 	loginResult,err := service.Login(loginParam.Username,loginParam.Password,appId)
 	if err!=nil {
-		log.Error(err)
 		util.ResponseError400(c.Writer,err.Error())
 		return
 	}
