@@ -26,7 +26,7 @@ const (
 
 type LoginResult struct  {
 	OpenId string `json:"open_id"`
-	Id int64 `json:"id"`
+	Rid string `json:"r_id"`
 	Token string `json:"token"`
 
 }
@@ -61,6 +61,7 @@ func Login(username string,password string,appId string) (*LoginResult,error)  {
 	if err!=nil{
 		return nil,errors.New("获取UCR数据失败!")
 	}
+	log.Debug("获取到UCR的用户信息:",string(userdata))
 	var loginResult *LoginResult
 	err =util.ReadJsonByByte(userdata,&loginResult)
 	if err!=nil{
