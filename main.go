@@ -29,12 +29,13 @@ func CORSMiddleware() gin.HandlerFunc {
 func main() {
 	//os.Setenv("APPID","commuser")
 	//os.Setenv("CONFIG_URL","http://configtest.qiyunxin.com")
-	if !startup.IsInstall() {
-		startup.InitDBData()
-	}
 
 	err := config.Init(true)
 	util.CheckErr(err)
+
+	if !startup.IsInstall() {
+		startup.InitDBData()
+	}
 
 	env := os.Getenv("GO_ENV")
 	if env=="tests" {
