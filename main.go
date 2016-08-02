@@ -6,6 +6,7 @@ import (
         "github.com/gin-gonic/gin"
 	"api"
 	"os"
+	"gitlab.qiyunxin.com/tangtao/utils/util"
 )
 
 
@@ -32,7 +33,8 @@ func main() {
 		startup.InitDBData()
 	}
 
-	config.Init()
+	err := config.Init(true)
+	util.CheckErr(err)
 
 	env := os.Getenv("GO_ENV")
 	if env=="tests" {
