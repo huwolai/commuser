@@ -6,5 +6,5 @@
   "mysql_db":"sampledb",
   "token_expire":300,
   "redis_address":"172.30.107.11:6379",
-  "appmanager":"1"
+  "appmanager":1
 }
