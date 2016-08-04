@@ -7,4 +7,5 @@
   "token_expire":300,
   "redis_address":"172.30.107.11:6379",
   "amqp_url":"amqp://guest:guest@172.30.192.72:5672/"
+  "appmanager":"1"
 }
