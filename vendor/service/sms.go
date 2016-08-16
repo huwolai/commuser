@@ -46,6 +46,8 @@ func SendCodeSMS(mobile string,code string) (error) {
 		return err
 	}
 
+	log.Error(resopnse.Body)
+
 	if resopnse.StatusCode==http.StatusOK {
 		var resutlMap map[string]string
 		err :=util.ReadJsonByByte([]byte(resopnse.Body),&resutlMap)
