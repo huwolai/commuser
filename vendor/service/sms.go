@@ -29,6 +29,7 @@ func SendCodeSMS(mobile string,code string) (error) {
 	header :=map[string]string{
 		"Authorization": auth,
 		"Content-Type": "application/json;charset=utf-8",
+		"Accept": "application/json",
 	}
 
 	param :=map[string]interface{}{
