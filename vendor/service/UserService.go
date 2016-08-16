@@ -113,6 +113,7 @@ func Login(username string,password string,appId string) (*LoginResult,error)  {
 
 	userdata,err := GetUserInfoFromUCR(strconv.FormatInt(user.Id,20))
 	if err!=nil{
+		log.Error(err)
 		return nil,errors.New("获取UCR数据失败!")
 	}
 	log.Debug("获取到UCR的用户信息:",string(userdata))
