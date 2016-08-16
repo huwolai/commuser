@@ -30,7 +30,7 @@ func main() {
 	//os.Setenv("APPID","commuser")
 	//os.Setenv("CONFIG_URL","http://configtest.qiyunxin.com")
 
-	err := config.Init(true)
+	err := config.Init(false)
 	util.CheckErr(err)
 
 	if !startup.IsInstall() {
