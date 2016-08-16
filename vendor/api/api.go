@@ -10,8 +10,16 @@ import (
 	"service"
 	"github.com/gin-gonic/gin"
 	"gitlab.qiyunxin.com/tangtao/utils/log"
-)
 
+	"strconv"
+	"time"
+	"math/rand"
+	"redis"
+)
+const CODE_PREFIX  = "CODE_"
+
+//code失效时间(单位秒)
+const CODE_EXPIRE  = 60*5
 
 
 type AppDto struct  {
@@ -25,6 +33,59 @@ type AppDto struct  {
 type LoginParam struct {
 	Username     string `form:"username" json:"username" binding:"required"`
 	Password string `form:"password" json:"password" binding:"required"`
+}
+
+type LoginForSMSParam struct  {
+	//手机号
+	Mobile string `json:"mobile"`
+	//验证码
+	Code string `json:"code"`
+}
+
+func LoginForSMS(c *gin.Context)  {
+	var loginParam LoginForSMSParam
+	err := c.BindJSON(&loginParam)
+	if err!=nil{
+		log.Error(err)
+		util.ResponseError400(c.Writer,"数据解析错误!")
+		return
+	}
+	appId := getAppId(c)
+	if appId=="" {
+		util.ResponseError400(c.Writer,"app_id不能为空!")
+		return
+	}
+
+	if loginParam.Mobile=="" {
+		util.ResponseError400(c.Writer,"手机号不能为空!")
+		return
+	}
+
+	if loginParam.Code=="" {
+		util.ResponseError400(c.Writer,"验证码不能为空!")
+		return
+	}
+
+	//从缓存中读取验证码
+	code :=redis.GetString(CODE_PREFIX+loginParam.Mobile)
+
+	if code=="" {
+		util.ResponseError400(c.Writer,"请先获取验证码!")
+		return
+	}
+
+	if loginParam.Code!=code {
+		util.ResponseError400(c.Writer,"验证码不正确!")
+		return
+	}
+
+	loginResult,err :=service.LoginForNoPwd(loginParam.Mobile,appId)
+	if err!=nil {
+		util.ResponseError400(c.Writer,err.Error())
+		return
+	}
+
+	util.WriteJson(c.Writer,loginResult)
 }
 
 //登录
@@ -51,6 +112,49 @@ func Login(c *gin.Context)  {
 		return
 	}
 	util.WriteJson(c.Writer,loginResult)
+}
+
+
+
+func SendCodeSMS(c *gin.Context) {
+
+	mobile := c.Param("mobile")
+
+	if mobile=="" {
+
+		util.ResponseError400(c.Writer,"请输入手机号!")
+		return
+	}
+
+	if len(mobile)!=11 {
+		util.ResponseError400(c.Writer,"手机号输入有误!")
+		return
+	}
+
+	code :=redis.GetString(CODE_PREFIX+mobile)
+	if code== ""{
+		code =GetRandCode()
+	}
+	redis.SetAndExpire(CODE_PREFIX+mobile,code,CODE_EXPIRE)
+
+	err :=service.SendCodeSMS(mobile,code)
+	if err!=nil{
+		log.Error(err)
+		util.ResponseError400(c.Writer,"短信发送失败!")
+		return
+	}
+
+	util.ResponseSuccess(c.Writer)
+}
+
+func GetRandCode() string {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	var code string
+	for i:=0; i<4; i++ {
+		code+=strconv.Itoa(r.Intn(9))
+	}
+
+	return code
 }
 
 func getAppId(c *gin.Context) string {

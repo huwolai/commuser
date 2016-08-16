@@ -50,7 +50,13 @@ func main() {
 
 	router.Use(CORSMiddleware())
 
-	router.POST("/login",api.Login)
+	v1 :=router.Group("/v1")
+	{
+		v1.POST("/login",api.Login)
+		v1.POST("/sms/:mobile/code",api.SendCodeSMS)
+		v1.POST("/loginSMS",api.LoginForSMS)
+	}
+
 
 	router.Run(":8080")
 }

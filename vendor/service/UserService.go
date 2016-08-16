@@ -31,6 +31,38 @@ type LoginResult struct  {
 
 }
 
+
+//无密码登录
+func LoginForNoPwd(mobile string,appId string) (*LoginResult,error) {
+	if mobile=="" {
+		return nil,errors.New("用户名不能为空!")
+	}
+
+	if appId=="" {
+		return nil,errors.New("appId不能为空!")
+	}
+
+	user :=  dao.NewUser()
+	user,err := user.QueryUserByUsername(mobile,appId)
+	if err!=nil {
+		log.Error(err)
+		return nil,errors.New("查询用户信息失败!")
+	}
+
+	userdata,err := GetUserInfoFromUCR(strconv.FormatInt(user.Id,20))
+	if err!=nil{
+		return nil,errors.New("获取UCR数据失败!")
+	}
+	log.Debug("获取到UCR的用户信息:",string(userdata))
+	var loginResult *LoginResult
+	err =util.ReadJsonByByte(userdata,&loginResult)
+	if err!=nil{
+		return nil,errors.New("解析数据错误!")
+	}
+
+	return loginResult,err;
+}
+
 //登录
 func Login(username string,password string,appId string) (*LoginResult,error)  {
 
@@ -89,9 +121,9 @@ func GetUserInfoFromUCR(rid string) ([]byte,error) {
 	paramsBytes,err := json.Marshal(params)
 	util.CheckErr(err)
 
-	data,err :=network.Post(UCR_URL+"/users/auth",paramsBytes,GetAuthHeader(params))
+	respose,err :=network.Post(UCR_URL+"/users/auth",paramsBytes,GetAuthHeader(params))
 
-	return data,err
+	return []byte(respose.Body),err
 }
 
 func GetAuthHeader(params map[string]interface{}) map[string]string   {
