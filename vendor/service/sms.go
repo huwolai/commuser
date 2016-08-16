@@ -41,7 +41,7 @@ func SendCodeSMS(mobile string,code string) (error) {
 		"to":mobile,
 		"appId":appId,
 		"templateId":"51954",
-		"datas":[]string{code,"企云信"},
+		"datas":[]string{code,"qiyunxin"},
 	}
 
 
@@ -53,21 +53,19 @@ func SendCodeSMS(mobile string,code string) (error) {
 		return err
 	}
 
-	log.Error(resopnse.Body)
+	log.Debug(resopnse.Body)
 
 	if resopnse.StatusCode==http.StatusOK {
-		var resutlMap map[string]string
+		var resutlMap map[string]interface{}
 		err :=util.ReadJsonByByte([]byte(resopnse.Body),&resutlMap)
 		if err!=nil {
 			return err
 		}
-		if resutlMap["statusCode"]== "000000" {
+		if resutlMap["statusCode"].(string)== "000000" {
 			return nil
 		}
 
-		log.Error(resutlMap)
-
-		return errors.New("短信发送错误["+resutlMap["statusCode"]+"]")
+		return errors.New("短信发送错误["+resutlMap["statusCode"].(string)+"]")
 	}else{
 		return errors.New("请求短信接口失败!")
 	}
