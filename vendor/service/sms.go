@@ -10,6 +10,7 @@ import (
 	"gitlab.qiyunxin.com/tangtao/utils/util"
 	"errors"
 	"encoding/hex"
+	"gitlab.qiyunxin.com/tangtao/utils/log"
 )
 
 const SMS_BASE_URL  = "https://app.cloopen.com:8883"
@@ -47,10 +48,15 @@ func SendCodeSMS(mobile string,code string) (error) {
 
 	if resopnse.StatusCode==http.StatusOK {
 		var resutlMap map[string]string
-		util.ReadJsonByByte([]byte(resopnse.Body),&resutlMap)
+		err :=util.ReadJsonByByte([]byte(resopnse.Body),&resutlMap)
+		if err!=nil {
+			return err
+		}
 		if resutlMap["statusCode"]== "000000" {
 			return nil
 		}
+
+		log.Error(resutlMap)
 
 		return errors.New("短信发送错误["+resutlMap["statusCode"]+"]")
 	}else{
