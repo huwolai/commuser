@@ -6,5 +6,8 @@
   "mysql_db":"sampledb",
   "token_expire":300,
   "appmanager":1,
-  "redis_address":"redis.databasestest.svc.cluster.local:6379"
+  "redis_address":"redis.databasestest.svc.cluster.local:6379",
+  "ucr_url":"http://ucrapi.qiyunxin.svc.cluster.local:8080",
+  "ucr_appid": "commuser",
+  "ucr_appkey":"262573d2e673477f95a8f6097c6751e0"
 }

@@ -12,6 +12,7 @@ import (
 	"time"
 	"strconv"
 	"gitlab.qiyunxin.com/tangtao/utils/log"
+	"gitlab.qiyunxin.com/tangtao/utils/config"
 )
 
 const (
@@ -121,15 +122,16 @@ func GetUserInfoFromUCR(rid string) ([]byte,error) {
 	paramsBytes,err := json.Marshal(params)
 	util.CheckErr(err)
 
-	respose,err :=network.Post(UCR_URL+"/users/auth",paramsBytes,GetAuthHeader(params))
+
+	respose,err :=network.Post(config.GetValue("ucr_url").ToString()+"/users/auth",paramsBytes,GetAuthHeader(params))
 
 	return []byte(respose.Body),err
 }
 
 func GetAuthHeader(params map[string]interface{}) map[string]string   {
 
-	apiId :=  UCR_APP_ID;
-	apikey := UCR_APP_KEY
+	apiId :=  config.GetValue("ucr_appid").ToString();
+	apikey := config.GetValue("ucr_appkey").ToString()
 	noncestr :="12345"
 	timestamp :=fmt.Sprintf("%d",time.Now().Unix())
 
