@@ -10,5 +10,8 @@ CREATE TABLE IF NOT EXISTS user(
   email VARCHAR(255) COMMENT '邮箱',
   mobile VARCHAR(255) COMMENT '手机号',
   password VARCHAR(255) COMMENT '密码',
-  status int COMMENT '用户状态 1.可用 0.不可用'
+  status int COMMENT '用户状态 1.可用 0.不可用',
+  is_payapi int COMMENT '是否开通支付API 0.否 1.是',
+  create_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  update_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间戳'
 ) CHARACTER SET utf8;

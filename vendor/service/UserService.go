@@ -17,12 +17,9 @@ import (
 
 const (
 
-	//用户中心URL
-	UCR_URL = "http://usercenterapi.test.svc.cluster.local:8080"
-	//用户中心APPID
-	UCR_APP_ID ="commuser"
-	//用户中心APPKEY
-	UCR_APP_KEY = "262573d2e673477f95a8f6097c6751e0"
+	//用户状态 正常
+	USER_STATUS_NORMAL= 1
+
 )
 
 type LoginResult struct  {
@@ -50,6 +47,18 @@ func LoginForNoPwd(mobile string,appId string) (*LoginResult,error) {
 		return nil,errors.New("查询用户信息失败!")
 	}
 
+	if user==nil {
+		user = dao.NewUser()
+		user.Mobile = mobile
+		user.AppId=appId
+		user.Status = USER_STATUS_NORMAL //
+		user,err =user.Insert()
+		if err!=nil{
+			log.Error(err)
+			return nil,errors.New("用户保存失败!")
+		}
+	}
+
 	userdata,err := GetUserInfoFromUCR(strconv.FormatInt(user.Id,20))
 	if err!=nil{
 		return nil,errors.New("获取UCR数据失败!")
@@ -61,8 +70,18 @@ func LoginForNoPwd(mobile string,appId string) (*LoginResult,error) {
 		return nil,errors.New("解析数据错误!")
 	}
 
+	if user.OpenId=="" {
+		err =user.UpdateUserOpenId(loginResult.OpenId,user.Id,appId)
+		if err!=nil{
+			return nil,errors.New("更新用户中心ID失败!")
+		}
+
+	}
+
 	return loginResult,err;
 }
+
+
 
 //登录
 func Login(username string,password string,appId string) (*LoginResult,error)  {

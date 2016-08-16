@@ -17,6 +17,8 @@ type User struct  {
 	Password string
 	//昵称
 	Nickname string
+	//是否开通支付API
+	IsPayapi int
 	//状态
 	Status int
 
@@ -25,6 +27,27 @@ type User struct  {
 func NewUser() *User  {
 
 	return &User{}
+}
+
+func (self *User) Insert() (*User,error)  {
+
+	result,err :=db.NewSession().InsertInto("user").Columns("app_id","open_id","email","mobile","password","nickname","status","is_payapi").Record(self).Exec()
+	if err!=nil{
+
+		return nil,err
+	}
+
+	lastId,_ :=result.LastInsertId()
+	self.Id = lastId
+
+	return self
+}
+
+func (self *User) UpdateUserOpenId(openId string,rid int64,appId string) error {
+
+	_,err :=db.NewSession().Update("user").Set("open_id",openId).Where("r_id=?",rid).Where("app_id=?",appId).Exec()
+
+	return err
 }
 
 //查询用户信息通过用户名
