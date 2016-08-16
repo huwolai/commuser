@@ -73,6 +73,7 @@ func LoginForNoPwd(mobile string,appId string) (*LoginResult,error) {
 	if user.OpenId=="" {
 		err =user.UpdateUserOpenId(loginResult.OpenId,user.Id,appId)
 		if err!=nil{
+			log.Error(err)
 			return nil,errors.New("更新用户中心ID失败!")
 		}
 
