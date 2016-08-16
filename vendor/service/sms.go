@@ -26,7 +26,7 @@ func SendCodeSMS(mobile string,code string) (error) {
 	dateStr :=date.Format("20060102150405")
 	log.Info(dateStr)
 
-	auth :=base64.StdEncoding.EncodeToString([]byte(accountSid+","+dateStr))
+	auth :=base64.StdEncoding.EncodeToString([]byte(accountSid+":"+dateStr))
 	h:= md5.New()
 	h.Write([]byte(accountSid+accountToken+dateStr))
 	sign :=h.Sum(nil)
