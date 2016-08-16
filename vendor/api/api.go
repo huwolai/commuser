@@ -85,7 +85,7 @@ func LoginForSMS(c *gin.Context)  {
 		return
 	}
 
-	util.WriteJson(c.Writer,loginResult)
+	c.JSON(http.StatusOK,loginResult)
 }
 
 //登录
