@@ -40,7 +40,7 @@ func (self *User) Insert() (*User,error)  {
 	lastId,_ :=result.LastInsertId()
 	self.Id = lastId
 
-	return self
+	return self,nil
 }
 
 func (self *User) UpdateUserOpenId(openId string,rid int64,appId string) error {
