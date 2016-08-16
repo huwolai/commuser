@@ -46,7 +46,7 @@ func (self *User) Insert() (*User,error)  {
 
 func (self *User) UpdateUserOpenId(openId string,rid int64,appId string) error {
 
-	_,err :=db.NewSession().Update("user").Set("open_id",openId).Where("r_id=?",rid).Where("app_id=?",appId).Exec()
+	_,err :=db.NewSession().Update("user").Set("open_id",openId).Where("id=?",rid).Where("app_id=?",appId).Exec()
 
 	return err
 }
