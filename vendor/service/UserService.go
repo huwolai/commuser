@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"gitlab.qiyunxin.com/tangtao/utils/log"
 	"gitlab.qiyunxin.com/tangtao/utils/config"
+	"net/http"
 )
 
 const (
@@ -144,8 +145,22 @@ func GetUserInfoFromUCR(rid string) ([]byte,error) {
 
 
 	respose,err :=network.Post(config.GetValue("ucr_url").ToString()+"/users/auth",paramsBytes,GetAuthHeader(params))
+	if respose.StatusCode==http.StatusOK {
 
-	return []byte(respose.Body),err
+		return []byte(respose.Body),nil
+	}else if respose.StatusCode==http.StatusBadRequest {
+		var resultMap map[string]interface{}
+		err =util.ReadJsonByByte([]byte(respose.Body),&resultMap)
+		if err!=nil{
+
+			return nil,err
+		}
+
+		return nil,errors.New(resultMap["err_msg"].(string))
+	}
+
+	return []byte(respose.Body),nil
+
 }
 
 func GetAuthHeader(params map[string]interface{}) map[string]string   {
