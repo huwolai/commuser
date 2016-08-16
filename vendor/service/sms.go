@@ -28,6 +28,7 @@ func SendCodeSMS(mobile string,code string) (error) {
 	signStr :=hex.EncodeToString(sign)
 	header :=map[string]string{
 		"Authorization": auth,
+		"Content-Type": "application/json;charset=utf-8",
 	}
 
 	param :=map[string]interface{}{
