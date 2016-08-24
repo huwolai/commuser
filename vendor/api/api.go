@@ -133,16 +133,17 @@ func SendCodeSMS(c *gin.Context) {
 
 	code :=redis.GetString(CODE_PREFIX+mobile)
 	if code== ""{
-		code =GetRandCode()
+		//code =GetRandCode()
+		code="1111"
 	}
 	redis.SetAndExpire(CODE_PREFIX+mobile,code,CODE_EXPIRE)
 
-	err :=service.SendCodeSMS(mobile,code)
-	if err!=nil{
-		log.Error(err)
-		util.ResponseError400(c.Writer,"短信发送失败!")
-		return
-	}
+	//err :=service.SendCodeSMS(mobile,code)
+	//if err!=nil{
+	//	log.Error(err)
+	//	util.ResponseError400(c.Writer,"短信发送失败!")
+	//	return
+	//}
 
 	util.ResponseSuccess(c.Writer)
 }
