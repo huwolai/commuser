@@ -60,7 +60,7 @@ func LoginForNoPwd(mobile string,appId string) (*LoginResult,error) {
 		}
 	}
 
-	userdata,err := GetUserInfoFromUCR(strconv.FormatInt(user.Id,20))
+	userdata,err := GetUserInfoFromUCR(strconv.FormatInt(user.Id,10))
 	if err!=nil{
 		log.Error(err)
 		return nil,errors.New("获取UCR数据失败!")
@@ -111,8 +111,8 @@ func Login(username string,password string,appId string) (*LoginResult,error)  {
 	if md5Data(user.Password)!=md5Data(password){
 		return nil,errors.New("密码不正确!")
 	}
-
-	userdata,err := GetUserInfoFromUCR(strconv.FormatInt(user.Id,20))
+	log.Error("绑定用户ID",user.Id)
+	userdata,err := GetUserInfoFromUCR(strconv.FormatInt(user.Id,10))
 	if err!=nil{
 		log.Error(err)
 		return nil,errors.New("获取UCR数据失败!")
