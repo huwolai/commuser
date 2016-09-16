@@ -1,5 +1,5 @@
 {
-  "publickey_Path": "keys/public_key.pub",
+  "publickey_Path": "config/keys/public_key.pub",
   "mysql_host":"mysqlcommuser.databases.svc.cluster.local:3306",
   "mysql_password":"123456",
   "mysql_user":"qiyunxin",

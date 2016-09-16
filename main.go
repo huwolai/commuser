@@ -32,11 +32,7 @@ func main() {
 
 	err := config.Init(false)
 	util.CheckErr(err)
-
-	if !startup.IsInstall() {
-		startup.InitDBData()
-	}
-
+	startup.InitDBData()
 	env := os.Getenv("GO_ENV")
 	if env=="tests" {
 		gin.SetMode(gin.DebugMode)
