@@ -42,8 +42,6 @@ func main() {
 		gin.SetMode(gin.TestMode)
 	}
 
-	gin.SetMode(gin.DebugMode)
-
 	router := gin.Default()
 
 	router.Use(CORSMiddleware())
