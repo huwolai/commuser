@@ -131,24 +131,28 @@ func SendCodeSMS(c *gin.Context) {
 		util.ResponseError400(c.Writer,"手机号输入有误!")
 		return
 	}
-
+	demoMobile :="13800000000"
 	code :=redis.GetString(CODE_PREFIX+mobile)
 	if code== ""{
 
 		code =GetRandCode()
 		//code="1111"
-		if mobile=="13800000000" {
+		if mobile==demoMobile {
 			code = "6666"
 		}
 	}
 	redis.SetAndExpire(CODE_PREFIX+mobile,code,CODE_EXPIRE)
 	configMap :=setting.GetYunTongXunSetting()
-	err :=service.SendSMSOfYunTongXun(mobile,configMap["code_template_id"],[]string{code})
-	if err!=nil{
-		log.Error(err)
-		util.ResponseError400(c.Writer,"短信发送失败!")
-		return
+
+	if mobile!=demoMobile {
+		err :=service.SendSMSOfYunTongXun(mobile,configMap["code_template_id"],[]string{code})
+		if err!=nil{
+			log.Error(err)
+			util.ResponseError400(c.Writer,"短信发送失败!")
+			return
+		}
 	}
+
 
 	util.ResponseSuccess(c.Writer)
 }
