@@ -16,6 +16,8 @@ import (
 	"math/rand"
 	"redis"
 	"setting"
+	"github.com/gocraft/dbr"
+	"gitlab.qiyunxin.com/tangtao/utils/db"
 )
 const CODE_PREFIX  = "CODE_"
 
@@ -41,6 +43,38 @@ type LoginForSMSParam struct  {
 	Mobile string `json:"mobile"`
 	//验证码
 	Code string `json:"code"`
+}
+
+const (
+	USER_STATUS_ENABLE = 1
+	USER_STATUS_DISABLE = 0
+	USER_STATUS_UNBIND = 2
+)
+
+type User struct {
+	Id int64 `json:"id"`
+	//用户OpenId 非必填
+	OpenId string `json:"open_id"`
+	// 昵称
+	Nickname string `json:"nickname"`
+	//用户名
+	Username string `json:"username"`
+	//手机号
+	Mobile string `json:"mobile"`
+	//密码
+	Password string `json:"password"`
+	//email
+	Email string `json:"email"`
+	//状态 1.可用 0.不可用 2.游离状态(此状态的用户表示关联用户中心的id不是当前用户表的ID,而是第三方用户的ID)
+	Status int `json:"status"`
+}
+
+//用户中心用户对象
+type UCRUser struct  {
+	OpenId string `json:"open_id"`
+	Rid string `json:"r_id"`
+	Token string `json:"token"`
+
 }
 
 func LoginForSMS(c *gin.Context)  {
@@ -89,6 +123,8 @@ func LoginForSMS(c *gin.Context)  {
 	c.JSON(http.StatusOK,loginResult)
 }
 
+
+
 //登录
 func Login(c *gin.Context)  {
 
@@ -115,7 +151,96 @@ func Login(c *gin.Context)  {
 	util.WriteJson(c.Writer,loginResult)
 }
 
+func Register(c *gin.Context)  {
 
+	var user *User
+	err :=c.BindJSON(&user)
+	if err!=nil{
+		log.Error(err)
+		util.ResponseError400(c.Writer,"参数有误！")
+		return 
+	}
+	if user.Mobile=="" && user.Username=="" &&user.Email==""{
+		util.ResponseError400(c.Writer,"用户名不能为空！")
+		return
+	}
+
+	tx,err :=db.NewSession().Begin()
+	if err!=nil{
+		log.Error(err)
+		util.ResponseError400(c.Writer,"开启事务出错！")
+		return
+	}
+	defer func() {
+		if err := recover();err!=nil{
+			tx.Rollback()
+			panic(err)
+		}
+	}()
+	if user.OpenId!="" { //存在用户ID（说明此用户不是此服务里的用户  只保存此用户的基础信息） 直接入库
+		user.Status = USER_STATUS_UNBIND
+
+	}else {
+		user.Status = USER_STATUS_ENABLE
+	}
+	userId,err := InsertUserTx(user,tx)
+	if err!=nil{
+		log.Error(err)
+		tx.Rollback()
+		util.ResponseError400(c.Writer,"添加用户失败！")
+		return
+	}
+	user.Id = userId
+	if user.OpenId=="" {
+		//不存在用户ID 需要请求用户中心获取
+		ucruser,err :=remoteGetUserInfoFromUCR(strconv.FormatInt(userId,10))
+		if err!=nil{
+			log.Error(err)
+			tx.Rollback()
+			util.ResponseError400(c.Writer,"绑定用户到用户中心失败！")
+			return
+		}
+		user.OpenId = ucruser.OpenId
+	}
+
+	err=tx.Commit()
+	if err!=nil{
+		log.Error(err)
+		util.ResponseError400(c.Writer,"提交失败！")
+		return
+	}
+	c.JSON(http.StatusOK,user)
+
+}
+
+func remoteGetUserInfoFromUCR(rid string) (*UCRUser,error) {
+	userdata,err := service.GetUserInfoFromUCR(rid)
+	if err!=nil{
+		log.Error(err)
+		return nil,errors.New("获取UCR数据失败!")
+	}
+	log.Debug("获取到UCR的用户信息:",string(userdata))
+	var ucrUser *UCRUser
+	err =util.ReadJsonByByte(userdata,&ucrUser)
+	if err!=nil{
+		return nil,errors.New("解析数据错误!")
+	}
+	return ucrUser,nil
+}
+
+func InsertUserTx(user *User,tx *dbr.Tx) (int64,error)  {
+
+	result,err :=tx.InsertInto("user").Columns("open_id","app_id","nickname","username","email","mobile","password","status").Record(user).Exec()
+	if err!=nil{
+		return 0,err
+	}
+
+	id,err :=result.LastInsertId()
+	if err!=nil{
+		return 0,err
+	}
+	return id,err
+}
 
 func SendCodeSMS(c *gin.Context) {
 
