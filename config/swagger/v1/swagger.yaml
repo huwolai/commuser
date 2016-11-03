@@ -94,6 +94,10 @@ paths:
               description: 登录参数
               schema:
                 $ref: '#/definitions/RegisterModel'
+            - name: app_id
+              in: header
+              type: string
+              description: app_id
           tags:
             - user
           responses:

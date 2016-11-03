@@ -18,6 +18,7 @@ import (
 	"setting"
 	"github.com/gocraft/dbr"
 	"gitlab.qiyunxin.com/tangtao/utils/db"
+	"gitlab.qiyunxin.com/tangtao/utils/app"
 )
 const CODE_PREFIX  = "CODE_"
 
@@ -53,6 +54,7 @@ const (
 
 type User struct {
 	Id int64 `json:"id"`
+	AppId string `json:"app_id"`
 	//用户OpenId 非必填
 	OpenId string `json:"open_id"`
 	// 昵称
@@ -140,7 +142,6 @@ func Login(c *gin.Context)  {
 	}
 
 	appId := getAppId(c)
-
 	if appId=="" {
 		util.ResponseError400(c.Writer,"app_id不能为空!")
 		return
@@ -174,6 +175,15 @@ func Register(c *gin.Context)  {
 		util.ResponseError400(c.Writer,"开启事务出错！")
 		return
 	}
+
+	appId :=app.GetAppIdInRequest(c.Request)
+	if appId==""{
+		log.Error("app_id不能为空！")
+		util.ResponseError400(c.Writer,"app_id不能为空！")
+		return
+	}
+	user.AppId = appId
+
 	defer func() {
 		if err := recover();err!=nil{
 			tx.Rollback()
