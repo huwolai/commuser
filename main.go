@@ -54,6 +54,6 @@ func main() {
 		v1.POST("/register",api.Register)
 	}
 
-
+	router.Static("/swagger","./config/swagger")
 	router.Run(":8080")
 }

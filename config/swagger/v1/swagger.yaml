@@ -1,0 +1,168 @@
+# this is an example of the Uber API
+# as a demonstration of an API spec in YAML
+swagger: '2.0'
+info:
+  title: 通用用户中心API
+  description: 通用用户中心主要是为了实现常用的用户登录/注册等功能 通用用户中心与用户中心进行数据对接保证通用用户中心的用户符合用户中心的规则
+  version: "1.0.0"
+# the domain of the service
+host: commuser.qiyunxin.com
+# array of all schemes that your API supports
+schemes:
+  - http
+# will be prefixed to all paths
+basePath: /v1
+produces:
+  - application/json
+paths:
+  /login:
+    post:
+      summary: 登录
+      description: |
+        常用登录接口
+      parameters:
+        - name: Login
+          in: body
+          description: 登录参数
+          schema:
+            $ref: '#/definitions/Login'
+      tags:
+        - user
+      responses:
+        200:
+          description: 返回用户信息
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/UCRUser'
+        400:
+          description: '错误'
+          schema:
+            $ref: '#/definitions/Error'
+  /loginSMS:
+    post:
+        summary: 短信验证码登录
+        description: |
+          短信验证码登录
+        parameters:
+          - name: Login
+            in: body
+            description: 登录参数
+            schema:
+              $ref: '#/definitions/LoginSMS'
+        tags:
+          - user
+        responses:
+          200:
+            description: 返回用户信息
+            schema:
+              type: object
+              items:
+                $ref: '#/definitions/UCRUser'
+          400:
+            description: '错误'
+            schema:
+              $ref: '#/definitions/Error'
+  /sms/{mobile}/code:
+    post:
+      summary: 发送短信验证码
+      description: |
+        发送短信验证码
+      parameters:
+        - name: mobile
+          in: path
+          description: '手机号'
+          required: true
+          type: string
+      tags:
+        - user
+      responses:
+        200:
+          description: 成功返回
+        400:
+          description: '错误'
+          schema:
+            $ref: '#/definitions/Error'
+  /register:
+      post:
+          summary: 注册
+          description: |
+            注册
+          parameters:
+            - name: Register
+              in: body
+              description: 登录参数
+              schema:
+                $ref: '#/definitions/RegisterModel'
+          tags:
+            - user
+          responses:
+            200:
+              description: 返回用户信息
+              schema:
+                type: object
+                items:
+                  $ref: '#/definitions/RegisterModel'
+            400:
+              description: '错误'
+              schema:
+                $ref: '#/definitions/Error'
+definitions:
+  RegisterModel:
+    type: object
+    properties:
+      open_id:
+        type: string
+        description: 用户ID
+      nickname:
+        type: string
+        description: 昵称
+      username:
+        type: string
+        description: 用户名
+      mobile:
+        type: string
+        description: 手机号
+      password:
+        type: string
+        description: 密码
+      email:
+        type: string
+        description: 邮箱
+  UCRUser:
+    type: object
+    properties:
+      open_id:
+        type: string
+        description: 用户ID
+      r_id:
+        type: string
+        description: 关联ID
+      token:
+        type: string
+        description: token
+  Login:
+    type: object
+    properties:
+      username:
+        type: string
+        description: 用户名
+      password:
+        type: string
+        description: 密码
+  LoginSMS:
+      type: object
+      properties:
+        mobile:
+          type: string
+          description: 手机号
+        code:
+          type: string
+          description: 验证码
+  Error:
+    type: object
+    properties:
+      err_code:
+        type: string
+      err_msg:
+        type: string

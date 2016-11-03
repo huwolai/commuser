@@ -172,7 +172,7 @@ func Register(c *gin.Context)  {
 		return
 	}
 	defer func() {
-		if err := recover();err!=nil{
+		if err = recover();err!=nil{
 			tx.Rollback()
 			panic(err)
 		}
@@ -206,7 +206,7 @@ func Register(c *gin.Context)  {
 	err=tx.Commit()
 	if err!=nil{
 		log.Error(err)
-		util.ResponseError400(c.Writer,"提交失败！")
+		util.ResponseError400(c.Writer,"提交失败!")
 		return
 	}
 	c.JSON(http.StatusOK,user)
@@ -225,7 +225,7 @@ func remoteGetUserInfoFromUCR(rid string) (*UCRUser,error) {
 	if err!=nil{
 		return nil,errors.New("解析数据错误!")
 	}
-	return ucrUser,nil
+
 }
 
 func InsertUserTx(user *User,tx *dbr.Tx) (int64,error)  {
