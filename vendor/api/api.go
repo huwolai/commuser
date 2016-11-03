@@ -172,7 +172,7 @@ func Register(c *gin.Context)  {
 		return
 	}
 	defer func() {
-		if err = recover();err!=nil{
+		if err := recover();err!=nil{
 			tx.Rollback()
 			panic(err)
 		}
@@ -225,6 +225,8 @@ func remoteGetUserInfoFromUCR(rid string) (*UCRUser,error) {
 	if err!=nil{
 		return nil,errors.New("解析数据错误!")
 	}
+
+	return ucrUser,nil
 
 }
 
