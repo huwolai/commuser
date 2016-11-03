@@ -65,6 +65,9 @@ type User struct {
 	Password string `json:"password"`
 	//email
 	Email string `json:"email"`
+	//标记
+	Flag string `json:"flag"`
+	Json string `json:"json"`
 	//状态 1.可用 0.不可用 2.游离状态(此状态的用户表示关联用户中心的id不是当前用户表的ID,而是第三方用户的ID)
 	Status int `json:"status"`
 }
@@ -232,7 +235,7 @@ func remoteGetUserInfoFromUCR(rid string) (*UCRUser,error) {
 
 func InsertUserTx(user *User,tx *dbr.Tx) (int64,error)  {
 
-	result,err :=tx.InsertInto("user").Columns("open_id","app_id","nickname","username","email","mobile","password","status").Record(user).Exec()
+	result,err :=tx.InsertInto("user").Columns("open_id","app_id","nickname","username","email","mobile","password","flag","json","status").Record(user).Exec()
 	if err!=nil{
 		return 0,err
 	}

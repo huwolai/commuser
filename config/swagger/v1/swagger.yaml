@@ -127,6 +127,12 @@ definitions:
       email:
         type: string
         description: 邮箱
+      flag:
+        type: string
+        description: 标记
+      json:
+        type: string
+        description: 附加数据（JSON格式）
   UCRUser:
     type: object
     properties:

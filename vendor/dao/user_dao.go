@@ -32,7 +32,7 @@ func NewUser() *User  {
 
 func (self *User) Insert() (*User,error)  {
 
-	result,err :=db.NewSession().InsertInto("user").Columns("app_id","open_id","email","username","mobile","password","nickname","status","is_payapi").Record(self).Exec()
+	result,err :=db.NewSession().InsertInto("user").Columns("app_id","open_id","email","username","mobile","password","nickname","json","flag","status","is_payapi").Record(self).Exec()
 	if err!=nil{
 
 		return nil,err
