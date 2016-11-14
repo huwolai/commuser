@@ -91,7 +91,7 @@ paths:
           parameters:
             - name: Register
               in: body
-              description: 登录参数
+              description: 注册参数
               schema:
                 $ref: '#/definitions/RegisterModel'
             - name: app_id

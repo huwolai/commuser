@@ -13,5 +13,6 @@ CREATE TABLE IF NOT EXISTS user(
   status int DEFAULT 0 COMMENT '用户状态 1.可用 0.不可用',
   is_payapi  int DEFAULT 0 COMMENT '是否开通支付API 0.否 1.是',
   create_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  update_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间戳'
+  update_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间戳',
+  UNIQUE INDEX open_id_app_id  (`open_id`,`app_id`)
 ) CHARACTER SET utf8;
