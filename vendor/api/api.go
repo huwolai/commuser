@@ -439,3 +439,6 @@ func AppIsOk(r *http.Request) (appId string,appKey string,er error) {
 
 	return app_id,app.AppKey,nil;
 }
+func Test(c *gin.Context)  {
+	util.ResponseSuccess(c.Writer)	
+}

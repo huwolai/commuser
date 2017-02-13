@@ -52,6 +52,8 @@ func main() {
 		v1.POST("/sms/:mobile/code",api.SendCodeSMS)
 		v1.POST("/loginSMS",api.LoginForSMS)
 		v1.POST("/register",api.Register)
+		
+		v1.GET("/test",api.Test)
 	}
 
 	router.Static("/swagger","./config/swagger")
