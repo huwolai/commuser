@@ -439,6 +439,52 @@ func AppIsOk(r *http.Request) (appId string,appKey string,er error) {
 
 	return app_id,app.AppKey,nil;
 }
+
+func ChagePassword(c *gin.Context)  {
+	type Info struct  {
+		OpenId 		string `json:"open_id"`
+		Password 	string `json:"password"`
+	}
+
+	var info Info
+	err := c.BindJSON(&info)
+	
+	if err!=nil{
+		log.Error(err)
+		util.ResponseError400(c.Writer,"数据解析错误!")
+		return
+	}
+	
+	appId := getAppId(c)
+	if appId=="" {
+		util.ResponseError400(c.Writer,"app_id不能为空!")
+		return
+	}
+	
+	password := c.Param("password")
+	if appId=="" {
+		util.ResponseError400(c.Writer,"password不能为空!")
+		return
+	}
+
+	if info.OpenId=="" {
+		util.ResponseError400(c.Writer,"open_id不能为空!")
+		return
+	}
+
+	if info.Password=="" {
+		util.ResponseError400(c.Writer,"密码不能为空!")
+		return
+	}
+
+	err =service.ChagePassword(info.OpenId,info.Password,password,appId)
+	if err!=nil {
+		util.ResponseError400(c.Writer,err.Error())
+		return
+	}
+
+	util.ResponseSuccess(c.Writer)
+}
 func Test(c *gin.Context)  {
 	util.ResponseSuccess(c.Writer)	
 }

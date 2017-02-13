@@ -59,3 +59,15 @@ func (self *User) QueryUserByUsername(username string,appId string) (*User,error
 
 	return user,err;
 }
+
+func (self *User) ChagePassword(openId string,password string,newPassword string,appId string) error {
+
+	_,err :=db.NewSession().Update("user").Set("password",newPassword).Where("open_id=?",openId).Where("app_id=?",appId).Where("password=?",password).Exec()
+
+	return err
+}
+
+
+
+
+

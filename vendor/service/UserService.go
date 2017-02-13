@@ -187,3 +187,10 @@ func GetAuthHeader(params map[string]interface{}) map[string]string   {
 		"noncestr":noncestr,
 	}
 }
+
+//修改密码
+func ChagePassword(openId string,password string,newPassword string,appId string) error {
+	user :=  dao.NewUser()
+	err  := user.ChagePassword(openId,password,newPassword,appId)
+	return err
+}
