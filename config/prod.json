@@ -7,6 +7,6 @@
   "token_expire":300,
   "redis_address":"redis.databases.svc.cluster.local:6379",
   "ucr_url":"http://ucrapi.qiyunxin.svc.cluster.local:8080",
-  "ucr_appid": "qiyunxin",
-  "ucr_appkey":"4537C07A563C4899B5A592DA3CC84A10"
+  "ucr_appid": "commuser",
+  "ucr_appkey":"262573d2e673477f95a8f6097c6751e0"
 }
