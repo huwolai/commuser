@@ -53,7 +53,7 @@ func main() {
 		v1.POST("/loginSMS",api.LoginForSMS)
 		v1.POST("/register",api.Register)
 		
-		v1.POST("/chagepwd/:password",api.ChagePassword)
+		v1.POST("/chagepwd",api.ChagePassword)
 		
 		v1.GET("/test",api.Test)
 	}

@@ -444,6 +444,7 @@ func ChagePassword(c *gin.Context)  {
 	type Info struct  {
 		OpenId 		string `json:"open_id"`
 		Password 	string `json:"password"`
+		Passwords 	string `json:"passwords"`
 	}
 
 	var info Info
@@ -459,13 +460,7 @@ func ChagePassword(c *gin.Context)  {
 	if appId=="" {
 		util.ResponseError400(c.Writer,"app_id不能为空!")
 		return
-	}
-	
-	password := c.Param("password")
-	if appId=="" {
-		util.ResponseError400(c.Writer,"password不能为空!")
-		return
-	}
+	}	
 
 	if info.OpenId=="" {
 		util.ResponseError400(c.Writer,"open_id不能为空!")
@@ -476,8 +471,13 @@ func ChagePassword(c *gin.Context)  {
 		util.ResponseError400(c.Writer,"密码不能为空!")
 		return
 	}
+	
+	if info.Passwords=="" {
+		util.ResponseError400(c.Writer,"password不能为空!")
+		return
+	}
 
-	err =service.ChagePassword(info.OpenId,info.Password,password,appId)
+	err =service.ChagePassword(info.OpenId,info.Password,info.Passwords,appId)
 	if err!=nil {
 		util.ResponseError400(c.Writer,err.Error())
 		return
