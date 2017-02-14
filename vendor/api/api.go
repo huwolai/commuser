@@ -20,6 +20,7 @@ import (
 	"gitlab.qiyunxin.com/tangtao/utils/db"
 	"gitlab.qiyunxin.com/tangtao/utils/app"
 	"encoding/json"
+	"gitlab.qiyunxin.com/tangtao/utils/page"
 )
 const CODE_PREFIX  = "CODE_"
 
@@ -494,14 +495,17 @@ func Lower(c *gin.Context)  {
 		util.ResponseError400(c.Writer,"app_id不能为空!")
 		return
 	}	
-	list,_  := service.Lower(c.Param("id"),appId)
+	
+	pIndex,pSize := page.ToPageNumOrDefault(c.Query("page_index"),c.Query("page_size"))
+	
+	list,total,_  := service.Lower(c.Param("id"),appId,pIndex,pSize)
 	
 	if len(list)==0 {
-		c.JSON(http.StatusOK,[]string{})
+		c.JSON(http.StatusOK,page.NewPage(pIndex,pSize,0,[]string{}))
 		return 
 	}
 	
-	c.JSON(http.StatusOK,list)
+	c.JSON(http.StatusOK,page.NewPage(pIndex,pSize,uint64(total),list))
 }
 func Authority(c *gin.Context)  {
 	appId := getAppId(c)
