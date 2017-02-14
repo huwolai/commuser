@@ -29,12 +29,12 @@ type User struct  {
 }
 
 type Authority struct  {
-	Id 		 string
-	OpenId   string
-	Json     string
-	Username string
-	Nickname string
-	Mobile   string
+	Id 		 string	`json:"id"`
+	OpenId   string	`json:"open_id"`
+	Json     string	`json:"json"`
+	Username string	`json:"username"`
+	Nickname string	`json:"nickname"`
+	Mobile   string	`json:"mobile"`
 }
 
 func NewUser() *User  {
@@ -86,14 +86,14 @@ func (self *User) ChagePassword(openId string,password string,newPassword string
 	return err
 }
 //下级
-func (self *User)Lower(id string,appId string,pageIndex uint64,pageSize uint64) ([]*Authority,error) {
+func (self *User)Lower(openId string,appId string,pageIndex uint64,pageSize uint64) ([]*Authority,error) {
 	var authority []*Authority
-	_,err :=db.NewSession().Select("*").From("user").Where("super_id=?",id).Where("app_id=?",appId).Limit(pageSize).Offset((pageIndex-1)*pageSize).LoadStructs(&authority)
+	_,err :=db.NewSession().Select("*").From("user").Where("super_id=?",openId).Where("app_id=?",appId).Limit(pageSize).Offset((pageIndex-1)*pageSize).LoadStructs(&authority)
 
 	return authority,err
 }
-func (self *User)LowerCount(id string,appId string) (int64,error) {
-	return db.NewSession().Select("count(id)").From("user").Where("super_id=?",id).Where("app_id=?",appId).ReturnInt64()
+func (self *User)LowerCount(openId string,appId string) (int64,error) {
+	return db.NewSession().Select("count(id)").From("user").Where("super_id=?",openId).Where("app_id=?",appId).ReturnInt64()
 }
 //修改权限
 func (self *User)Authority(appId string,openId string,json string) error {

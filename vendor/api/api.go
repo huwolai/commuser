@@ -498,7 +498,7 @@ func Lower(c *gin.Context)  {
 	
 	pIndex,pSize := page.ToPageNumOrDefault(c.Query("page_index"),c.Query("page_size"))
 	
-	list,total,_  := service.Lower(c.Param("id"),appId,pIndex,pSize)
+	list,total,_  := service.Lower(c.Param("open_id"),appId,pIndex,pSize)
 	
 	if len(list)==0 {
 		c.JSON(http.StatusOK,page.NewPage(pIndex,pSize,0,[]string{}))

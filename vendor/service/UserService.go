@@ -195,10 +195,10 @@ func ChagePassword(openId string,password string,newPassword string,appId string
 	return err
 }
 //下级
-func Lower(id string,appId string,pIndex uint64,pSize uint64) ([]*dao.Authority,int64,error) {
+func Lower(openId string,appId string,pIndex uint64,pSize uint64) ([]*dao.Authority,int64,error) {
 	user 		:=  dao.NewUser()
-	list,err 	:= user.Lower(id,appId,pIndex,pSize)
-	count,_  	:= user.LowerCount(id,appId)
+	list,err 	:= user.Lower(openId,appId,pIndex,pSize)
+	count,_  	:= user.LowerCount(openId,appId)
 	return list,count,err
 }
 //修改权限
