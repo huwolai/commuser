@@ -55,6 +55,11 @@ func main() {
 		
 		v1.POST("/chagepwd",api.ChagePassword)
 		
+		v1.GET("/lower/:id",api.Lower)
+		
+		v1.POST("/authority",api.Authority)
+		v1.GET("/authority/:open_id",api.AuthorityByOpenId)
+		
 		v1.GET("/test",api.Test)
 	}
 

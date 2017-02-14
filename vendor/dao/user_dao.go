@@ -1,6 +1,9 @@
 package dao
 
-import "gitlab.qiyunxin.com/tangtao/utils/db"
+import (
+	"gitlab.qiyunxin.com/tangtao/utils/db"
+	"errors"
+)
 
 type User struct  {
 
@@ -23,6 +26,15 @@ type User struct  {
 	//状态
 	Status int
 
+}
+
+type Authority struct  {
+	Id 		 string
+	OpenId   string
+	Json     string
+	Username string
+	Nickname string
+	Mobile   string
 }
 
 func NewUser() *User  {
@@ -62,10 +74,50 @@ func (self *User) QueryUserByUsername(username string,appId string) (*User,error
 
 func (self *User) ChagePassword(openId string,password string,newPassword string,appId string) error {
 
-	_,err :=db.NewSession().Update("user").Set("password",newPassword).Where("open_id=?",openId).Where("app_id=?",appId).Where("password=?",password).Exec()
+	res,err :=db.NewSession().Update("user").Set("password",newPassword).Where("open_id=?",openId).Where("app_id=?",appId).Where("password=?",password).Exec()
+	
+	if err==nil {
+		count, _ := res.RowsAffected()
+		if count < 1 {
+			return errors.New("修改失败")
+		}
+	}
+	
+	return err
+}
+//下级
+func (self *User)Lower(id string,appId string) ([]*Authority,error) {
+	var authority []*Authority
+	_,err :=db.NewSession().Select("*").From("user").Where("super_id=?",id).Where("app_id=?",appId).LoadStructs(&authority)
+
+	return authority,err
+}
+//修改权限
+func (self *User)Authority(appId string,openId string,json string) error {
+	_,err :=db.NewSession().Update("user").Set("json",json).Where("open_id=?",openId).Where("app_id=?",appId).Limit(1).Exec()
 
 	return err
 }
+//下级
+func (self *User)AuthorityByOpenId(openId string,appId string) (string,error) {
+	var authority *Authority
+	_,err :=db.NewSession().Select("*").From("user").Where("open_id=?",openId).Where("app_id=?",appId).LoadStructs(&authority)
+
+	return authority.Json,err
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

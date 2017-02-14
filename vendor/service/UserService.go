@@ -194,3 +194,21 @@ func ChagePassword(openId string,password string,newPassword string,appId string
 	err  := user.ChagePassword(openId,password,newPassword,appId)
 	return err
 }
+//下级
+func Lower(id string,appId string) ([]*dao.Authority,error) {
+	user :=  dao.NewUser()
+	list,err  := user.Lower(id,appId)
+	return list,err
+}
+//修改权限
+func Authority(appId string,openId string,json string) error {
+	user :=  dao.NewUser()
+	err  := user.Authority(appId,openId,json)
+	return err
+}
+//权限
+func AuthorityByOpenId(openId string,appId string) (string,error) {
+	user :=  dao.NewUser()
+	json,err  := user.AuthorityByOpenId(openId,appId)
+	return json,err
+}

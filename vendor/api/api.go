@@ -19,6 +19,7 @@ import (
 	"github.com/gocraft/dbr"
 	"gitlab.qiyunxin.com/tangtao/utils/db"
 	"gitlab.qiyunxin.com/tangtao/utils/app"
+	"encoding/json"
 )
 const CODE_PREFIX  = "CODE_"
 
@@ -441,6 +442,13 @@ func AppIsOk(r *http.Request) (appId string,appKey string,er error) {
 }
 
 func ChagePassword(c *gin.Context)  {
+	appId := getAppId(c)
+	if appId=="" {
+		util.ResponseError400(c.Writer,"app_id不能为空!")
+		return
+	}	
+
+
 	type Info struct  {
 		OpenId 		string `json:"open_id"`
 		Password 	string `json:"password"`
@@ -456,11 +464,6 @@ func ChagePassword(c *gin.Context)  {
 		return
 	}
 	
-	appId := getAppId(c)
-	if appId=="" {
-		util.ResponseError400(c.Writer,"app_id不能为空!")
-		return
-	}	
 
 	if info.OpenId=="" {
 		util.ResponseError400(c.Writer,"open_id不能为空!")
@@ -484,6 +487,77 @@ func ChagePassword(c *gin.Context)  {
 	}
 
 	util.ResponseSuccess(c.Writer)
+}
+func Lower(c *gin.Context)  {
+	appId := getAppId(c)
+	if appId=="" {
+		util.ResponseError400(c.Writer,"app_id不能为空!")
+		return
+	}	
+	list,_  := service.Lower(c.Param("id"),appId)
+	
+	if len(list)==0 {
+		c.JSON(http.StatusOK,[]string{})
+		return 
+	}
+	
+	c.JSON(http.StatusOK,list)
+}
+func Authority(c *gin.Context)  {
+	appId := getAppId(c)
+	if appId=="" {
+		util.ResponseError400(c.Writer,"app_id不能为空!")
+		return
+	}	
+	
+	type Authority struct  {
+		Json 		string `json:"json"`
+		OpenId 		string `json:"open_id"`
+	}
+
+	var authority Authority
+	
+	err := c.BindJSON(&authority)
+	if err!=nil{
+		log.Error(err)
+		util.ResponseError400(c.Writer,"数据解析错误!")
+		return
+	}
+	
+	if authority.OpenId=="" {
+		log.Error(err)
+		util.ResponseError400(c.Writer,"open_id不能为空!")
+		return
+	}
+	
+	err = service.Authority(appId,authority.OpenId,authority.Json)
+	
+	if err!=nil {
+		util.ResponseError400(c.Writer,err.Error())
+		return
+	}
+	
+	util.ResponseSuccess(c.Writer)	
+}
+func AuthorityByOpenId(c *gin.Context)  {
+	appId := getAppId(c)
+	if appId=="" {
+		util.ResponseError400(c.Writer,"app_id不能为空!")
+		return
+	}	
+	authority,_  := service.AuthorityByOpenId(c.Param("open_id"),appId)
+	
+	if len(authority)==0 {
+		c.JSON(http.StatusOK,"")
+		return 
+	}
+	
+	var data []map[string]interface{}
+	if err := json.Unmarshal([]byte(authority), &data); err != nil {
+		util.ResponseError400(c.Writer,err.Error())
+		return 
+	}
+	c.JSON(http.StatusOK,data)
 }
 func Test(c *gin.Context)  {
 	util.ResponseSuccess(c.Writer)	
