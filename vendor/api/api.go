@@ -561,7 +561,17 @@ func AuthorityByOpenId(c *gin.Context)  {
 		util.ResponseError400(c.Writer,err.Error())
 		return 
 	}
-	c.JSON(http.StatusOK,data)
+	
+	myself:="0"
+	if c.Query("myself")!="" {
+		myself="1"
+	}
+	
+	
+	c.JSON(http.StatusOK,map[string]interface{}{
+		"myself"	:myself,
+		"json"		:data,	
+	})
 }
 func Test(c *gin.Context)  {
 	util.ResponseSuccess(c.Writer)	
